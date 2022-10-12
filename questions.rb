@@ -19,6 +19,22 @@ class Users
         data.map {|datum| Users.new(datum)}
     end
 
+    def self.find_by_name(fname, lname)
+        data = QuestionsDatabase.instance.execute(<<-SQL, fname, lname)
+
+            SELECT
+                *
+            FROM
+                users
+            WHERE
+                fname = ? AND lname = ?
+
+            SQL
+   
+        data.map {|datum| Users.new(datum)}
+
+    end
+
     def initialize(hash)
         @id = hash['id']
         @fname = hash['fname']
