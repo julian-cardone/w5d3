@@ -41,6 +41,13 @@ class Users
         @lname = hash['lname']
     end
 
+    def authored_questions
+        Questions.find_by_author_id(self.id)
+    end
+
+    def authored_replies
+        Replies.find_by_user_id(self.id)
+    end
 end
 
 class Questions 
@@ -50,12 +57,19 @@ class Questions
         data.map {|datum| Questions.new(datum)}
     end
 
-     def initialize(hash)
+    def self.find_by_author_id(author_id)
+        data = QuestionsDatabase.instance.execute("SELECT * FROM questions WHERE author_id = #{author_id}")
+        data.map {|datum| Questions.new(datum)}
+    end
+
+    def initialize(hash)
         @id = hash['id']
         @title = hash['title']
         @body = hash['body']
         @author_id = hash['author_id']
-     end
+    end
+
+
 
 end
 
@@ -65,6 +79,17 @@ class Replies
         data = QuestionsDatabase.instance.execute("SELECT * FROM replies WHERE id = #{id}")
         data.map {|datum| Replies.new(datum)}
     end
+
+    def self.find_by_user_id(user_id)
+        data = QuestionsDatabase.instance.execute("SELECT * FROM replies WHERE author_id = #{user_id}")
+        data.map {|datum| Replies.new(datum)}
+    end
+
+    def self.find_by_question_id(question_id)
+        data = QuestionsDatabase.instance.execute("SELECT * FROM replies WHERE questions_id = #{question_id}")
+        data.map {|datum| Replies.new(datum)}
+    end
+
 
     def initialize(hash)
         @id = hash['id']
