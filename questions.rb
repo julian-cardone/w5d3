@@ -51,6 +51,7 @@ class Users
 end
 
 class Questions 
+    attr_accessor :id, :title, :body, :author_id
 
     def self.find_by_id(id)
         data = QuestionsDatabase.instance.execute("SELECT * FROM questions WHERE id = #{id}")
@@ -69,11 +70,18 @@ class Questions
         @author_id = hash['author_id']
     end
 
+    def author
+        Users.find_by_id(self.author_id)
+    end
 
+    def replies
+        Replies.find_by_question_id(self.id)
+    end
 
 end
 
 class Replies
+    attr_accessor :id, :body, :questions_id, :parent_reply_id, :author_id
 
     def self.find_by_id(id)
         data = QuestionsDatabase.instance.execute("SELECT * FROM replies WHERE id = #{id}")
@@ -97,6 +105,25 @@ class Replies
         @questions_id = hash['questions_id']
         @parent_reply_id = hash['parent_reply_id']
         @author_id = hash['author_id']
+    end
+
+    def author
+        Users.find_by_id(self.author_id)
+    end
+
+    def question
+        Questions.find_by_id(self.questions_id)
+    end
+
+    def parent_reply
+        raise 'no parent reply' if !self.parent_reply_id 
+        Replies.find_by_id(self.parent_reply_id)
+    end
+
+    def child_replies
+        data = QuestionsDatabase.instance.execute("SELECT * FROM replies WHERE parent_reply_id = #{self.id}")
+        raise 'no replies' if data.empty?
+        data.map {|datum| Replies.new(datum)}
     end
 
 end
