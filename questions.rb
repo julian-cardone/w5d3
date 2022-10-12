@@ -127,3 +127,11 @@ class Replies
     end
 
 end
+
+class QuestionFollow
+
+    def self.followers_for_quetion_id(question_id)
+        
+    end
+
+end
