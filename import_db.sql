@@ -32,11 +32,11 @@ CREATE TABLE replies(
     id INTEGER PRIMARY KEY,
     body TEXT,
     questions_id INTEGER NOT NULL,
-    parent_reply INTEGER NOT NULL,
+    parent_reply_id INTEGER ,
     author_id INTEGER NOT NULL,
 
     FOREIGN KEY(questions_id) REFERENCES questions(id),
-    FOREIGN KEY(parent_reply) REFERENCES replies(id),
+    FOREIGN KEY(parent_reply_id) REFERENCES replies(id),
     FOREIGN KEY(author_id) REFERENCES users(id)
 );
 
@@ -60,7 +60,7 @@ VALUES
     ('Lunch?', 'Is it lunch time yet?', (SELECT id FROM users WHERE fname = 'Julian' AND lname = 'Cardona'));
 
 INSERT INTO
-    replies(body, questions_id, parent_reply, author_id)
+    replies(body, questions_id, parent_reply_id, author_id)
 VALUES
     ('anywhere you''d like', 
     (SELECT id FROM questions WHERE title = 'Bathroom?'),
